@@ -1,4 +1,4 @@
-function [s,w,wprime] = solveImuArray(ya,yg,r,sa,sg)
+function [s,w,wprime, L_sort] = solveImuArray(ya,yg,r,sa,sg)
 % SOLVEIMUARRAY Find the translation and rotation forces of an IMU array.
 %   [s,w,wprime] = solveImuArray(ya,yg,r,sa,sg) finds the common specific
 %       forces s, the angular velocity w and the angular acceleration
@@ -81,12 +81,12 @@ function [s,w,wprime] = solveImuArray(ya,yg,r,sa,sg)
     
     % Sort solutions based on likelihood.
     L = -0.5*dot((y-W*m),P*(y-W*m));
-    [~,sind] = sort(L,'descend');
+    [L_sort,sind] = sort(L,'descend');
     w = w(:,sind);
     
     % Solve linearly for s and wprime.
     swprime = HQ*(ya-Wa*m);
-    s = swprime(4:6,:);
-    wprime = swprime(1:3,:);
+    s = swprime(4:6,sind);
+    wprime = swprime(1:3,sind);
 end
 
